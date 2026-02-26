@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 150 60% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 150 60% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 60% 8%;
+
+    --primary: 150 60% 16%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 150 10% 94%;
+    --secondary-foreground: 150 60% 16%;
+
+    --muted: 150 10% 94%;
+    --muted-foreground: 150 10% 40%;
+
+    --accent: 150 60% 16%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 150 10% 88%;
+    --input: 150 10% 88%;
+    --ring: 150 60% 16%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens */
+    --brand-green: 150 60% 16%;
+    --brand-green-light: 150 40% 90%;
+    --brand-green-glow: 150 60% 25%;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+
+    /* Shadows */
+    --shadow-card: 0 4px 20px -4px hsl(150 60% 16% / 0.1);
+    --shadow-glow: 0 0 30px hsl(150 60% 16% / 0.1);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 150 60% 8%;
+    --sidebar-primary: 150 60% 16%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 150 10% 94%;
+    --sidebar-accent-foreground: 150 60% 16%;
+    --sidebar-border: 150 10% 88%;
+    --sidebar-ring: 150 60% 16%;
+  }
+
+  .dark {
+    --background: 150 20% 8%;
+    --foreground: 0 0% 98%;
+    --card: 150 20% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 150 20% 12%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 150 60% 40%;
+    --primary-foreground: 150 60% 8%;
+    --secondary: 150 15% 20%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 150 15% 20%;
+    --muted-foreground: 150 10% 60%;
+    --accent: 150 60% 40%;
+    --accent-foreground: 150 60% 8%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 15% 20%;
+    --input: 150 15% 20%;
+    --ring: 150 60% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card border border-border shadow-lg rounded-2xl;
+  }
+
+  .glass-input {
+    @apply bg-secondary/50 border-border focus:border-primary/50 focus:ring-primary/20;
+  }
+
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent;
+  }
+
+  .progress-ring {
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 15px hsl(150 60% 16% / 0.2); }
+    50% { box-shadow: 0 0 30px hsl(150 60% 16% / 0.35); }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.3s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+
+  .animate-pulse-subtle {
+    animation: pulseSuble 2s ease-in-out infinite;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseSuble {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-50px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-10px);
+  }
+  70% {
+    transform: scale(0.9) translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
