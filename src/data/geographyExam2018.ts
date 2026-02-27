@@ -21,7 +21,7 @@ export const geographyExam2018: Exam = {
         'Latin America',
         'North America'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 2,
@@ -32,7 +32,7 @@ export const geographyExam2018: Exam = {
         'The Kilimanjaro',
         'The Sierra Nevada'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 3,
@@ -43,7 +43,7 @@ export const geographyExam2018: Exam = {
         'The Temperate monsoon land',
         'The Temperate Desert'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 4,
@@ -54,7 +54,7 @@ export const geographyExam2018: Exam = {
         'Coriolis Force',
         'Tectonic Force'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 5,
@@ -65,7 +65,7 @@ export const geographyExam2018: Exam = {
         'Monsoon Winds',
         'Mountain Winds'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 6,
@@ -76,7 +76,7 @@ export const geographyExam2018: Exam = {
         'The Volta River',
         'The Nile River'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 7,
@@ -87,7 +87,7 @@ export const geographyExam2018: Exam = {
         'Construction',
         'Communication'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 8,
@@ -98,7 +98,7 @@ export const geographyExam2018: Exam = {
         'Africa',
         'Australia'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 9,
@@ -109,7 +109,7 @@ export const geographyExam2018: Exam = {
         'Pro- natalist Policy',
         'Anti- contraceptive Policy'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 10,
@@ -120,7 +120,7 @@ export const geographyExam2018: Exam = {
         'Automobile Manufacturing',
         'Tourism Industry'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 11,
@@ -131,7 +131,7 @@ export const geographyExam2018: Exam = {
         'Sedimentary Rock',
         'Intrusive Igneous Rock'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 12,
@@ -142,7 +142,7 @@ export const geographyExam2018: Exam = {
         'The Kilimanjaro Mountain',
         'The Kenya Mountain'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 13,
@@ -153,7 +153,7 @@ export const geographyExam2018: Exam = {
         'Hides and Skins',
         'Pulses'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 14,
@@ -164,7 +164,7 @@ export const geographyExam2018: Exam = {
         'Niger',
         'Gambia'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 15,
@@ -175,7 +175,7 @@ export const geographyExam2018: Exam = {
         'North West Coast',
         'South- West Coast'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 16,
@@ -186,7 +186,7 @@ export const geographyExam2018: Exam = {
         'Australian Alps',
         'Mount Kilimanjaro'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 17,
@@ -197,7 +197,7 @@ export const geographyExam2018: Exam = {
         'Afro-montane vegetation',
         'Desert and semi-desert vegetation'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 18,
@@ -208,7 +208,7 @@ export const geographyExam2018: Exam = {
         'High rainfall',
         'Low insolation'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 19,
@@ -219,7 +219,7 @@ export const geographyExam2018: Exam = {
         'Africa experienced by low level of industrialization',
         'High level of trade within the continent while low across the world.'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 20,
@@ -230,7 +230,7 @@ export const geographyExam2018: Exam = {
         'a quantitative change in the national capital regardless political, economic and cultural improvement.',
         'The quantitative accumulation of the national capital.'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 21,
@@ -252,7 +252,7 @@ export const geographyExam2018: Exam = {
         'Land-fragmentation',
         'Dependence of reliable rainfall'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 23,
@@ -261,9 +261,9 @@ export const geographyExam2018: Exam = {
         'Bicycle',
         'Four wheel drive cars',
         'Train',
-        'Ordinary'
+        'Agriculture'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 24,
@@ -274,7 +274,7 @@ export const geographyExam2018: Exam = {
         'The north western highland',
         'The South western highland'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 25,
@@ -285,7 +285,7 @@ export const geographyExam2018: Exam = {
         'Central Africa',
         'Southern Africa'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 26,
@@ -307,7 +307,7 @@ export const geographyExam2018: Exam = {
         'Cape Bone',
         'Cape Bone'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 28,
@@ -318,7 +318,7 @@ export const geographyExam2018: Exam = {
         'Socio-economic development',
         'Change in population pyramid'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 29,
@@ -329,7 +329,7 @@ export const geographyExam2018: Exam = {
         'slave trade',
         'movement of the people'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 30,
@@ -340,7 +340,7 @@ export const geographyExam2018: Exam = {
         'Economic development',
         'gross domestic product'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 31,
@@ -362,7 +362,7 @@ export const geographyExam2018: Exam = {
         'agriculture',
         'fishing'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 33,
@@ -373,7 +373,7 @@ export const geographyExam2018: Exam = {
         'Commercial farming',
         'Subsistence farming'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 34,
@@ -384,7 +384,7 @@ export const geographyExam2018: Exam = {
         'Tropical Dry climate',
         'High land climate'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 35,
@@ -395,7 +395,7 @@ export const geographyExam2018: Exam = {
         'Jurassic Period',
         'Quaternary Period'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 36,
@@ -406,7 +406,7 @@ export const geographyExam2018: Exam = {
         'Thermosphere',
         'Troposphere'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 37,
@@ -417,7 +417,7 @@ export const geographyExam2018: Exam = {
         'Sufficient share of resources for native people',
         'Existence of suffice resources'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 38,
@@ -428,7 +428,7 @@ export const geographyExam2018: Exam = {
         'Bahir Dar Town',
         'Adama Tawn'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 39,
@@ -450,7 +450,7 @@ export const geographyExam2018: Exam = {
         'Raw materials',
         'Industrial parks'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 41,
@@ -494,7 +494,7 @@ export const geographyExam2018: Exam = {
         'Western Africa',
         'Central Africa'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 45,
@@ -516,7 +516,7 @@ export const geographyExam2018: Exam = {
         'Crop cultivation',
         'Tourism'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 47,
@@ -527,7 +527,7 @@ export const geographyExam2018: Exam = {
         'Republic of South Africa and Cote ’D’ Ivoire',
         'Ghana and Cot ‘D’ Ivoire'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 48,
@@ -538,7 +538,7 @@ export const geographyExam2018: Exam = {
         'Socio economic growth',
         'Sustainable development'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 49,
@@ -549,7 +549,7 @@ export const geographyExam2018: Exam = {
         'Megalopolis',
         'Large town'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 50,
@@ -560,18 +560,18 @@ export const geographyExam2018: Exam = {
         'controlling wild fire',
         'using a low cost solar energy'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 51,
-      text: 'Which of the following has an insignificant contribution for the under development of tourist industry in Ethiopia?',
+      text: 'Which one of the following is a unique feature of rural settlement:',
       options: [
-        'the inadequate entertainment facility',
-        'the absence of historical and cultural cites',
-        'the absence of modern hotels of good standards',
-        'the absence of modern tourist guiders'
+        'Settlers Consists cities and towns',
+        'Settlers are specialized in business activities',
+        'Settlers are depend on agriculture',
+        'Characterized with high population density'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 52,
@@ -582,7 +582,7 @@ export const geographyExam2018: Exam = {
         'Standard of living',
         'the geographical location of the country'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 53,
@@ -593,7 +593,7 @@ export const geographyExam2018: Exam = {
         'exploiting of niche market and opportunities',
         'slowing the existing rapid population growth'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 54,
@@ -604,7 +604,7 @@ export const geographyExam2018: Exam = {
         'giving priority for the development of water energy resources',
         'Making the economy dependent on tourism sector'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 55,
@@ -615,7 +615,7 @@ export const geographyExam2018: Exam = {
         'prevention of the effects of drought and promoting development',
         'democratization and defense'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 56,
@@ -626,7 +626,7 @@ export const geographyExam2018: Exam = {
         'scarcity of natural resources',
         'lake of trained human power and efficient management system'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 57,
@@ -637,7 +637,7 @@ export const geographyExam2018: Exam = {
         'function fertility and mortality',
         'environmental problems'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 58,
@@ -648,7 +648,7 @@ export const geographyExam2018: Exam = {
         'Growth and Transformation Program',
         'Development and Alleviate Poverty'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 59,
@@ -670,7 +670,7 @@ export const geographyExam2018: Exam = {
         'Settlers are depend on agriculture',
         'Characterized with high population density'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 61,
@@ -681,7 +681,7 @@ export const geographyExam2018: Exam = {
         'Increased demand for food',
         'Improvement in Technology'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 62,
@@ -703,7 +703,7 @@ export const geographyExam2018: Exam = {
         'High social status of women',
         'Perception of high economic value of children'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 64,
@@ -714,7 +714,7 @@ export const geographyExam2018: Exam = {
         'Rate of Natural Increase (RNI)',
         'Population Growth Rate (PGR)'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 65,
@@ -747,7 +747,7 @@ export const geographyExam2018: Exam = {
         'Reducing the age of marriage for boys and girls',
         'Promoting breast-feeding for birth spacing'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 68,
@@ -758,7 +758,7 @@ export const geographyExam2018: Exam = {
         'Maternal mortality rate',
         'Crude death rate'
       ],
-      correctAnswer: 0
+      correctAnswer: 2
     },
     {
       id: 69,
@@ -769,7 +769,7 @@ export const geographyExam2018: Exam = {
         'Paleozoic era → denudation and peneplanation',
         'Tertiary period → transgression and regression of the sea'
       ],
-      correctAnswer: 0
+      correctAnswer: 3
     },
     {
       id: 70,
@@ -784,7 +784,7 @@ export const geographyExam2018: Exam = {
     },
     {
       id: 71,
-      text: 'Which one of the following is TRUE about transport networks?',
+      text: 'Which one the following is TRUE about transport networks?',
       options: [
         'Different vehicles have different hill climbing capacities.',
         'Roads are affected by relief much more than Railways.',
@@ -824,7 +824,7 @@ export const geographyExam2018: Exam = {
         'Kilimanjaro',
         'Ras Dejene'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 75,
@@ -835,7 +835,7 @@ export const geographyExam2018: Exam = {
         'Low fluctuations in temperature within a day',
         'Annual rainfall ranging between 500 and 1,500 mm'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 76,
@@ -1051,7 +1051,7 @@ export const geographyExam2018: Exam = {
         'Delta',
         'Estuary'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 94,
@@ -1063,7 +1063,7 @@ export const geographyExam2018: Exam = {
         'three',
         'Four'
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 95,

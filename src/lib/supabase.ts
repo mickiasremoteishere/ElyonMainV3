@@ -1176,6 +1176,29 @@ export const updateStudentStatus = async (studentId: string, status: 'active' | 
   }
 };
 
+// Function to delete a student from the database (with caution)
+export const deleteStudent = async (studentId: string) => {
+  try {
+    const { error } = await supabase
+      .from('students_1')
+      .delete()
+      .eq('admission_id', studentId);
+
+    if (error) {
+      // Check for common RLS policy errors
+      if (error.code === 'PGRST116' || error.message.includes('policy')) {
+        console.warn('Delete blocked by Row Level Security policy. Please check RLS policies for students_1 table.');
+        throw new Error('Delete operation blocked by database security policies. Please contact administrator to configure proper RLS policies.');
+      }
+      throw error;
+    }
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    throw error;
+  }
+};
+
 // ⚠️ DELETE FUNCTIONS REQUIRE RLS POLICY CONFIGURATION ⚠️
 // If delete operations are failing, you need to configure Row Level Security policies in Supabase:
 //
@@ -1217,25 +1240,72 @@ export const deleteStudentExamResult = async (studentId: string, examId: string)
   }
 };
 
-// Function to delete a student from the database (with caution)
-export const deleteStudent = async (studentId: string) => {
+// Function to recalculate and update exam results for a specific exam
+export const recalculateExamResults = async (examId: string, updatedExam: Exam) => {
   try {
-    const { error } = await supabase
-      .from('students_1')
-      .delete()
-      .eq('admission_id', studentId);
+    console.log(`Recalculating results for exam: ${examId}`);
+    
+    // Get all exam results for this exam
+    const { data: examResults, error: fetchError } = await supabase
+      .from('exam_results')
+      .select('*')
+      .eq('exam_id', examId);
 
-    if (error) {
-      // Check for common RLS policy errors
-      if (error.code === 'PGRST116' || error.message.includes('policy')) {
-        console.warn('Delete blocked by Row Level Security policy. Please check RLS policies for students_1 table.');
-        throw new Error('Delete operation blocked by database security policies. Please contact administrator to configure proper RLS policies.');
-      }
-      throw error;
+    if (fetchError) {
+      console.error('Error fetching exam results:', fetchError);
+      throw fetchError;
     }
-    return { success: true };
+
+    if (!examResults || examResults.length === 0) {
+      console.log('No exam results found for this exam');
+      return { success: true, updated: 0 };
+    }
+
+    // Create a map of question id to correct answer
+    const correctAnswersMap = new Map();
+    updatedExam.questions.forEach(q => {
+      if (!q.isPassage) {
+        correctAnswersMap.set(String(q.id), q.correctAnswer);
+      }
+    });
+
+    const totalQuestions = updatedExam.questions.filter(q => !q.isPassage).length;
+    let updatedCount = 0;
+
+    // Update each result
+    for (const result of examResults) {
+      let correct = 0;
+      const answers = result.answers || {};
+
+      // Recalculate correct answers
+      for (const [questionId, answer] of Object.entries(answers)) {
+        if (correctAnswersMap.has(questionId) && answer === correctAnswersMap.get(questionId)) {
+          correct++;
+        }
+      }
+
+      const scorePercentage = (correct / totalQuestions) * 100;
+
+      // Update the result
+      const { error: updateError } = await supabase
+        .from('exam_results')
+        .update({
+          correct_answers: correct,
+          score_percentage: scorePercentage
+        })
+        .eq('id', result.id);
+
+      if (updateError) {
+        console.error(`Error updating result ${result.id}:`, updateError);
+      } else {
+        updatedCount++;
+      }
+    }
+
+    console.log(`Updated ${updatedCount} exam results`);
+    return { success: true, updated: updatedCount };
   } catch (error) {
-    console.error('Error deleting student:', error);
+    console.error('Error recalculating exam results:', error);
     throw error;
   }
 };

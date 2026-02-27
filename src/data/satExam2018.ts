@@ -123,6 +123,12 @@ export const satExam2018: Exam = {
       correctAnswer: 0
     },
     {
+      id: 'passage-sat-reading',
+      type: 'passage',
+      text: 'To read a lot is essential. It is stupid not to venture outside the examination “set books” or the textbooks you have chosen for the intensive study. Read as many books in English as you can, not as study material but for pleasure. Do not choose the most difficult books you find with the idea of listing and learning as many new words as possible. Choose what is likely to interest you and be sure in advance that for that deadens the interest and checks real learning. Look up a word here and there but, as a general policy try to push ahead, guessing what works mean from the context. It is extensive reading that normally helps you to get interest in extra reading and thereby improve your English. You should enjoy the feeling, what extensive reading gives, some command of the language. As you read, you will become more familiar with words and the language. As you read, you will become more familiar with words and sentence patterns you already know, understanding them better as you meet them in more contexts, some of which may differ only slightly from others.',
+      isPassage: true
+    },
+    {
       id: 11,
       text: 'The main purpose of the passage',
       options: [
@@ -131,7 +137,8 @@ export const satExam2018: Exam = {
         'Giving advice on how to teach English',
         'Describing the importance of English'
       ],
-      correctAnswer: 0
+      correctAnswer: 0,
+      passageId: 'passage-sat-reading'
     },
     {
       id: 12,
@@ -142,7 +149,8 @@ export const satExam2018: Exam = {
         'The place where you live',
         'Reading a lot of English books'
       ],
-      correctAnswer: 3
+      correctAnswer: 3,
+      passageId: 'passage-sat-reading'
     },
     {
       id: 13,
@@ -153,7 +161,8 @@ export const satExam2018: Exam = {
         'Read a lot of English books.',
         'Learn different words from people.'
       ],
-      correctAnswer: 2
+      correctAnswer: 2,
+      passageId: 'passage-sat-reading'
     },
     {
       id: 14,
@@ -164,7 +173,8 @@ export const satExam2018: Exam = {
         'Choose the more difficult books from your subject books.',
         'Choose the books from outside your examination course.'
       ],
-      correctAnswer: 3
+      correctAnswer: 3,
+      passageId: 'passage-sat-reading'
     },
     {
       id: 15,
@@ -175,7 +185,18 @@ export const satExam2018: Exam = {
         'Reading difficult words',
         'Intensive reading'
       ],
-      correctAnswer: 1
+      correctAnswer: 1,
+      passageId: 'passage-sat-reading'
+    },
+    {
+      id: 'passage-music-therapy',
+      type: 'passage',
+      text: `(1) Mental and physical health professionals may consider referring clients and patients to a music therapist for a number of reasons. It seems a particularly good choice for the social worker who is coordinating a client’s case. Music therapists use music to establish a relationship with the patient and to improve the patient’s health, using highly structured musical interactions. Patients and therapists may sing, play instruments, dance, compose, or simply listen to music.
+
+(2) The course of training for music therapists is comprehensive. In addition to formal musical and therapy training, music therapists are taught to discern what kinds of interventions will be most beneficial for each individual patient. Because each patient is different and has different goals, the music therapist must be able to understand the patient’s situation and choose the music and activities that will do the most toward helping the patient achieve his or her goals. The referring social worker can help this process by clearly communicating each client’s history.
+
+(3) Although patients may develop their musical skills, that is not the main goal of music therapy. Any client who needs particular work on communication or on academic, emotional, and social skills, and who is not responding to traditional therapy, is an excellent candidate for music therapy.`,
+      isPassage: true
     },
     {
       id: 16,
@@ -186,7 +207,8 @@ export const satExam2018: Exam = {
         'Using music therapy',
         'Music therapy and social work'
       ],
-      correctAnswer: 1
+      correctAnswer: 1,
+      passageId: 'passage-music-therapy'
     },
     {
       id: 17,
@@ -197,7 +219,8 @@ export const satExam2018: Exam = {
         'Training for music therapists',
         'Referring patients to music therapists.'
       ],
-      correctAnswer: 1
+      correctAnswer: 1,
+      passageId: 'passage-music-therapy'
     },
     {
       id: 18,
@@ -208,7 +231,8 @@ export const satExam2018: Exam = {
         'What Social Workers Need to Know about Music Therapy',
         'How to Use Music to Combat Depression through Music Therapy'
       ],
-      correctAnswer: 2
+      correctAnswer: 2,
+      passageId: 'passage-music-therapy'
     },
     {
       id: 19,
@@ -219,7 +243,8 @@ export const satExam2018: Exam = {
         'Were orphaned as children.',
         'Need to develop coping skills.'
       ],
-      correctAnswer: 0
+      correctAnswer: 0,
+      passageId: 'passage-music-therapy'
     },
     {
       id: 20,
@@ -230,51 +255,62 @@ export const satExam2018: Exam = {
         'Music therapy is a relatively new field.',
         'Music therapy can succeed where traditional therapies have failed.'
       ],
-      correctAnswer: 3
+      correctAnswer: 3,
+      passageId: 'passage-music-therapy'
+    },
+    {
+      id: 'passage-synonym',
+      type: 'passage',
+      text: 'SYNONYM',
+      isPassage: true
     },
     {
       id: 21,
-      text: 'The spies conducted a covert operation, without being noticed by anyone.',
+      text: 'The spies conducted a **covert** operation, without being noticed by anyone.',
       options: [
         'Illegal',
         'Hidden',
         'Foreign',
         'Dangerous'
       ],
-      correctAnswer: 1
+      correctAnswer: 1,
+      passageId: 'passage-synonym'
     },
     {
       id: 22,
-      text: 'The designer window treatment in her house, installed 17 years ago, were outmoded and thus needs to be changed.',
+      text: 'The designer window treatment in her house, installed 17 years ago, were **outmoded** and thus needs to be changed.',
       options: [
         'Outdated',
         'Modern',
         'Cheap',
         'Expensive'
       ],
-      correctAnswer: 0
+      correctAnswer: 0,
+      passageId: 'passage-synonym'
     },
     {
       id: 23,
-      text: 'She showed a blatant disregard for the rules.',
+      text: 'She showed a **blatant** disregard for the rules.',
       options: [
         'Rebellious',
         'Respectful',
         'Hidden',
         'Obvious'
       ],
-      correctAnswer: 3
+      correctAnswer: 3,
+      passageId: 'passage-synonym'
     },
     {
       id: 24,
-      text: 'The interior of the hotel is so repulsive that everybody returns as soon as they enter it.',
+      text: 'The interior of the hotel is so **repulsive** that everybody returns as soon as they enter it.',
       options: [
         'Attractive',
         'Bright',
         'Repugnant',
         'Ugly'
       ],
-      correctAnswer: 2
+      correctAnswer: 2,
+      passageId: 'passage-synonym'
     },
     {
       id: 25,
@@ -366,7 +402,7 @@ export const satExam2018: Exam = {
     },
     {
       id: 33,
-      text: 'The guest made derogatory remarks about the food he was served and by doing so he proved to be ungrateful and disrespectful.',
+      text: 'The guest made **derogatory** remarks about the food he was served and by doing so he proved to be ungrateful and disrespectful.',
       options: [
         'interesting',
         'complimentary',
@@ -377,7 +413,7 @@ export const satExam2018: Exam = {
     },
     {
       id: 34,
-      text: 'All of his brothers like milk but he has a strong aversion for it.',
+      text: 'All of his brothers like milk but he has a strong **aversion** for it.',
       options: [
         'hate',
         'care',
@@ -388,7 +424,7 @@ export const satExam2018: Exam = {
     },
     {
       id: 35,
-      text: 'The inhabitants of the island were barbarians who have never lived in the modern world.',
+      text: 'The inhabitants of the island were **barbarians** who have never lived in the modern world.',
       options: [
         'hate',
         'bad',

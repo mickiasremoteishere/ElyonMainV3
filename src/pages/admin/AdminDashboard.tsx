@@ -3,8 +3,9 @@ import { useAdminAuth, Admin } from '@/contexts/AdminAuthContext';
 import { studentResults, violations } from '@/data/mockData';
 import { exams } from '@/data/exams';
 import { Exam } from '@/data/exams';
+import { geographyExam2018 } from '@/data/geographyExam2018';
 import { Users, FileText, AlertTriangle, BookOpen, TrendingUp, TrendingDown, AlertCircle, BarChart3, PieChart, Target, Award, Clock, Zap, CheckCircle, XCircle, Activity, Trophy, GraduationCap } from 'lucide-react';
-import { fetchStudents, getEnhancedDashboardStats, queryWithRetry, fetchScheduledExams, fetchProgrammes, initializeExamsInDatabase, supabase } from '@/lib/supabase';
+import { fetchStudents, getEnhancedDashboardStats, queryWithRetry, fetchScheduledExams, fetchProgrammes, initializeExamsInDatabase, supabase, recalculateExamResults } from '@/lib/supabase';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Cell, Area, AreaChart, Pie } from 'recharts';
 
@@ -461,20 +462,23 @@ const AdminDashboard = () => {
     }
   };
 
-  // Get personalized subtitle based on admin
-  const getAdminSubtitle = (admin: Admin | null) => {
-    if (admin?.role === 'overseer') return 'Overseeing All Educational Operations';
-    switch (admin?.username) {
-      case 'ErgoZFood@elyonmain.app':
-        return 'Managing System Operations';
-      case 'HldanaZPresident@elyonmain.app':
-        return 'Leading Educational Excellence';
-      case 'ZenaZPrestigious@elyonmain.app':
-        return 'Managing English Language Excellence';
-      case 'Asnakew@elyonmain.app':
-        return 'Managing Chemistry Laboratory Operations';
-      default:
-        return 'Managing Educational Excellence';
+  const handleRecalculateGeographyResults = async () => {
+    if (!confirm('Are you sure you want to recalculate all Geography 2018 exam results? This will update scores based on the corrected answer key.')) {
+      return;
+    }
+
+    try {
+      const result = await recalculateExamResults('geography-2018', geographyExam2018);
+      if (result.success) {
+        alert(`Successfully updated ${result.updated} exam results.`);
+        // Refresh the dashboard data
+        window.location.reload();
+      } else {
+        alert('Failed to recalculate results.');
+      }
+    } catch (error) {
+      console.error('Error recalculating results:', error);
+      alert('An error occurred while recalculating results.');
     }
   };
 
@@ -587,6 +591,16 @@ const AdminDashboard = () => {
               }
             </p>
           </div>
+          {admin?.role === 'overseer' && (
+            <div className="flex gap-3">
+              <button
+                onClick={handleRecalculateGeographyResults}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
+              >
+                Recalculate Geography Results
+              </button>
+            </div>
+          )}
           {isUsingFallback && (
             <div className="flex items-center text-yellow-600 bg-yellow-50 px-3 py-1.5 rounded-lg text-sm">
               <AlertCircle className="w-4 h-4 mr-2" />
