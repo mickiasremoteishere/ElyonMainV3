@@ -33,6 +33,7 @@ import ReportsPage from "./pages/admin/ReportsPage";
 import VersionManagementPage from "./pages/admin/VersionManagementPage";
 import TeachersPage from "./pages/admin/TeachersPage";
 import ProgrammesPage from "./pages/admin/ProgrammesPage";
+import ExamAccessPage from "./pages/admin/ExamAccessPage";
 import NotFound from "./pages/NotFound";
 import WelcomeScreen from "./components/WelcomeScreen";
 
@@ -82,6 +83,7 @@ function App() {
                     <Route path="teachers" element={<TeachersPage />} />
                     <Route path="programmes" element={<ProgrammesPage />} />
                     <Route path="exams" element={<ExamsPage />} />
+                    <Route path="exam-access" element={<ExamAccessPage />} />
                     <Route path="results" element={<AdminResultsPage />} />
                     <Route path="exam-release" element={<ExamReleasePage />} />
                     <Route path="version-management" element={<VersionManagementPage />} />

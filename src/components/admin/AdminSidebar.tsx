@@ -18,7 +18,8 @@ import {
   BarChart3,
   Tag,
   GraduationCap,
-  Calendar
+  Calendar,
+  Lock
 } from 'lucide-react';
 import { useState } from 'react';
 import logo from '@/assets/logo.png';
@@ -30,6 +31,7 @@ const menuItems = [
   { path: '/admin/teachers', label: 'Teachers', icon: GraduationCap },
   { path: '/admin/programmes', label: 'Programmes', icon: Calendar, superadminOnly: true },
   { path: '/admin/exams', label: 'Exams', icon: BookOpen, superadminOnly: true },
+  { path: '/admin/exam-access', label: 'Exam Access', icon: Lock, superadminOnly: true },
   { path: '/admin/results', label: 'Results', icon: FileText },
   { path: '/admin/exam-release', label: 'Exam Release', icon: Send, superadminOnly: true },
   { path: '/admin/version-management', label: 'Version Management', icon: Tag, superadminOnly: true },

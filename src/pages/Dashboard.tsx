@@ -6,6 +6,7 @@ import ExamCard from '@/components/ExamCard';
 import { exams } from '@/data/exams';
 import { BookOpen, Trophy, Clock, Atom, Users, GraduationCap } from 'lucide-react';
 import { loadExamAdminChanges, fetchScheduledExams, fetchProgrammes } from '@/lib/supabase';
+import { checkStudentExamAccess } from '@/lib/supabase';
 
 // Helper function to get current week's start date (Monday)
 const getCurrentWeekStart = () => {
@@ -66,6 +67,7 @@ const Dashboard = () => {
   // Add state for scheduled exams from DB
   const [scheduledExams, setScheduledExams] = useState<any[]>([]);
   const [programmes, setProgrammes] = useState<any[]>([]);
+  const [accessibleExamIds, setAccessibleExamIds] = useState<Set<string>>(new Set());
 
   // Load exams on component mount
   useEffect(() => {
@@ -81,6 +83,41 @@ const Dashboard = () => {
     };
     initializeExams();
   }, []);
+
+  // Check exam access permissions
+  useEffect(() => {
+    const checkExamAccess = async () => {
+      if (!student?.id) return;
+
+      try {
+        const accessibleIds = new Set<string>();
+
+        // Check access for each exam concurrently
+        const accessPromises = examsWithChanges.map(exam =>
+          checkStudentExamAccess(student.id, exam.id)
+        );
+
+        const accessResults = await Promise.all(accessPromises);
+
+        accessResults.forEach((hasAccess, index) => {
+          if (hasAccess) {
+            accessibleIds.add(examsWithChanges[index].id);
+          }
+        });
+
+        setAccessibleExamIds(accessibleIds);
+      } catch (error) {
+        console.error('Error checking exam access:', error);
+        // On error, allow access to all exams (fallback)
+        const allExamIds = new Set(examsWithChanges.map(exam => exam.id));
+        setAccessibleExamIds(allExamIds);
+      }
+    };
+
+    if (examsWithChanges.length > 0) {
+      checkExamAccess();
+    }
+  }, [student?.id, examsWithChanges]);
 
   useEffect(() => {
     // Initialize analytics
@@ -112,15 +149,38 @@ const Dashboard = () => {
       setProgrammes(updatedProgrammes);
     };
 
+    const syncExamAccess = async () => {
+      if (!student?.id) return;
+
+      try {
+        const accessibleIds = new Set<string>();
+        const accessPromises = examsWithChanges.map(exam =>
+          checkStudentExamAccess(student.id, exam.id)
+        );
+        const accessResults = await Promise.all(accessPromises);
+
+        accessResults.forEach((hasAccess, index) => {
+          if (hasAccess) {
+            accessibleIds.add(examsWithChanges[index].id);
+          }
+        });
+
+        setAccessibleExamIds(accessibleIds);
+      } catch (error) {
+        console.error('Error syncing exam access:', error);
+      }
+    };
+
     // Check for updates every 5 seconds
     const interval = setInterval(() => {
       syncAdminChanges();
       syncScheduledExams();
       syncProgrammes();
+      syncExamAccess();
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [student?.id, examsWithChanges]);
 
   if (isLoading) {
     return (
@@ -137,9 +197,14 @@ const Dashboard = () => {
   // Get student's stream
   const studentStream = student?.class?.toLowerCase().includes('natural') ? 'natural' : 'social';
   
-  // Filter exams for each stream
+  // Filter exams for each stream and by access permissions
   const filterExamsByStream = (stream: string) => {
     return examsWithChanges.filter(exam => {
+      // Check if exam is in the accessible list
+      if (!accessibleExamIds.has(exam.id)) {
+        return false;
+      }
+
       // Show exams that match the stream or are for both
       return !exam.stream || exam.stream.toLowerCase() === 'both' || exam.stream.toLowerCase() === stream;
     });

@@ -2304,27 +2304,228 @@ export const deleteTeacher = async (id: string): Promise<boolean> => {
   }
 };
 
-// Function to fetch teachers by programme
-export const fetchTeachersByProgramme = async (programmeId: string): Promise<Teacher[]> => {
+// Types for exam access management
+export interface ExamAccess {
+  id?: string;
+  exam_id: string;
+  student_id: string; // admission_id
+  has_access: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Function to check if a student has access to an exam
+export const checkStudentExamAccess = async (studentId: string, examId: string): Promise<boolean> => {
   try {
-    console.log('🔄 fetchTeachersByProgramme called with programmeId:', programmeId);
+    console.log('🔄 Checking exam access for student:', studentId, 'exam:', examId);
 
     const { data, error } = await supabase
-      .from('teachers')
-      .select('*')
-      .eq('programme_id', programmeId)
-      .eq('status', 'active')
-      .order('name', { ascending: true });
+      .from('exam_access')
+      .select('has_access')
+      .eq('student_id', studentId)
+      .eq('exam_id', examId)
+      .maybeSingle(); // Use maybeSingle instead of single to handle no results
 
     if (error) {
-      console.error('❌ Error fetching teachers by programme:', error);
+      console.error('❌ Error checking exam access:', error);
       throw error;
     }
 
-    console.log('✅ Successfully fetched teachers for programme:', data?.length || 0, 'teachers');
+    const hasAccess = data?.has_access ?? false; // Default to false if no record exists
+    console.log('✅ Exam access check result:', hasAccess);
+    return hasAccess;
+  } catch (error) {
+    console.error('❌ Exception in checkStudentExamAccess:', error);
+    return false; // Default to no access on error
+  }
+};
+
+// Function to grant exam access to a student
+export const grantExamAccess = async (studentId: string, examId: string): Promise<void> => {
+  try {
+    console.log('🔄 Granting exam access for student:', studentId, 'exam:', examId);
+
+    const { data, error } = await supabase
+      .from('exam_access')
+      .upsert({
+        student_id: studentId,
+        exam_id: examId,
+        has_access: true,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'student_id,exam_id'
+      });
+
+    if (error) {
+      console.error('❌ Error granting exam access:', error);
+      throw error;
+    }
+
+    console.log('✅ Successfully granted exam access');
+  } catch (error) {
+    console.error('❌ Exception in grantExamAccess:', error);
+    throw error;
+  }
+};
+
+// Function to revoke exam access from a student
+export const revokeExamAccess = async (studentId: string, examId: string): Promise<void> => {
+  try {
+    console.log('🔄 Revoking exam access for student:', studentId, 'exam:', examId);
+
+    const { data, error } = await supabase
+      .from('exam_access')
+      .upsert({
+        student_id: studentId,
+        exam_id: examId,
+        has_access: false,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'student_id,exam_id'
+      });
+
+    if (error) {
+      console.error('❌ Error revoking exam access:', error);
+      throw error;
+    }
+
+    console.log('✅ Successfully revoked exam access');
+  } catch (error) {
+    console.error('❌ Exception in revokeExamAccess:', error);
+    throw error;
+  }
+};
+
+// Function to bulk grant exam access to multiple students
+export const bulkGrantExamAccess = async (studentIds: string[], examId: string): Promise<void> => {
+  try {
+    console.log('🔄 Bulk granting exam access for', studentIds.length, 'students to exam:', examId);
+
+    const accessRecords = studentIds.map(studentId => ({
+      student_id: studentId,
+      exam_id: examId,
+      has_access: true,
+      updated_at: new Date().toISOString()
+    }));
+
+    const { data, error } = await supabase
+      .from('exam_access')
+      .upsert(accessRecords, {
+        onConflict: 'student_id,exam_id'
+      });
+
+    if (error) {
+      console.error('❌ Error bulk granting exam access:', error);
+      throw error;
+    }
+
+    console.log('✅ Successfully bulk granted exam access');
+  } catch (error) {
+    console.error('❌ Exception in bulkGrantExamAccess:', error);
+    throw error;
+  }
+};
+
+// Function to bulk revoke exam access from multiple students
+export const bulkRevokeExamAccess = async (studentIds: string[], examId: string): Promise<void> => {
+  try {
+    console.log('🔄 Bulk revoking exam access for', studentIds.length, 'students from exam:', examId);
+
+    const accessRecords = studentIds.map(studentId => ({
+      student_id: studentId,
+      exam_id: examId,
+      has_access: false,
+      updated_at: new Date().toISOString()
+    }));
+
+    const { data, error } = await supabase
+      .from('exam_access')
+      .upsert(accessRecords, {
+        onConflict: 'student_id,exam_id'
+      });
+
+    if (error) {
+      console.error('❌ Error bulk revoking exam access:', error);
+      throw error;
+    }
+
+    console.log('✅ Successfully bulk revoked exam access');
+  } catch (error) {
+    console.error('❌ Exception in bulkRevokeExamAccess:', error);
+    throw error;
+  }
+};
+
+// Function to fetch all exam access records for an exam
+export const fetchExamAccessRecords = async (examId: string): Promise<ExamAccess[]> => {
+  try {
+    console.log('🔄 Fetching exam access records for exam:', examId);
+
+    const { data, error } = await supabase
+      .from('exam_access')
+      .select('*')
+      .eq('exam_id', examId)
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      console.error('❌ Error fetching exam access records:', error);
+      throw error;
+    }
+
+    console.log('✅ Successfully fetched exam access records:', data?.length || 0);
     return data || [];
   } catch (error) {
-    console.error('❌ Exception in fetchTeachersByProgramme:', error);
+    console.error('❌ Exception in fetchExamAccessRecords:', error);
+    return [];
+  }
+};
+
+// Function to get students with access to a specific exam
+export const getStudentsWithExamAccess = async (examId: string): Promise<string[]> => {
+  try {
+    console.log('🔄 Getting students with access to exam:', examId);
+
+    const { data, error } = await supabase
+      .from('exam_access')
+      .select('student_id')
+      .eq('exam_id', examId)
+      .eq('has_access', true);
+
+    if (error) {
+      console.error('❌ Error getting students with exam access:', error);
+      throw error;
+    }
+
+    const studentIds = data?.map(record => record.student_id) || [];
+    console.log('✅ Students with access:', studentIds.length);
+    return studentIds;
+  } catch (error) {
+    console.error('❌ Exception in getStudentsWithExamAccess:', error);
+    return [];
+  }
+};
+
+// Function to get exams accessible to a student
+export const getExamsAccessibleToStudent = async (studentId: string): Promise<string[]> => {
+  try {
+    console.log('🔄 Getting exams accessible to student:', studentId);
+
+    const { data, error } = await supabase
+      .from('exam_access')
+      .select('exam_id')
+      .eq('student_id', studentId)
+      .eq('has_access', true);
+
+    if (error) {
+      console.error('❌ Error getting exams accessible to student:', error);
+      throw error;
+    }
+
+    const examIds = data?.map(record => record.exam_id) || [];
+    console.log('✅ Exams accessible to student:', examIds.length);
+    return examIds;
+  } catch (error) {
+    console.error('❌ Exception in getExamsAccessibleToStudent:', error);
     return [];
   }
 };

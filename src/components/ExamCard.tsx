@@ -3,7 +3,7 @@ import { Calendar, Clock, FileText, ArrowRight, CheckCircle, XCircle } from 'luc
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
-import { hasStudentTakenExam, ExamResult } from '@/lib/supabase';
+import { hasStudentTakenExam, ExamResult, checkStudentExamAccess } from '@/lib/supabase';
 
 interface ExamCardProps {
   exam: Exam;
@@ -15,6 +15,7 @@ const ExamCard = ({ exam, index }: ExamCardProps) => {
   const { student } = useAuth();
   const [examResult, setExamResult] = useState<ExamResult | null>(null);
   const [isChecking, setIsChecking] = useState(true);
+  const [hasAccess, setHasAccess] = useState(false);
   const isCancelled = !!examResult?.answers && 
     (examResult.answers as any)._cancelled === true;
 
@@ -26,10 +27,18 @@ const ExamCard = ({ exam, index }: ExamCardProps) => {
       }
       
       try {
-        const result = await hasStudentTakenExam(student.id, exam.id);
+        // Check both exam result and access permission
+        const [result, access] = await Promise.all([
+          hasStudentTakenExam(student.id, exam.id),
+          checkStudentExamAccess(student.id, exam.id)
+        ]);
+
         setExamResult(result);
+        setHasAccess(access);
       } catch (error) {
         console.error('Error checking exam status:', error);
+        // On error, deny access for security
+        setHasAccess(false);
       } finally {
         setIsChecking(false);
       }
@@ -39,8 +48,8 @@ const ExamCard = ({ exam, index }: ExamCardProps) => {
   }, [exam.id, student?.id]);
 
   const handleCardClick = () => {
-    if (examResult || exam.status === 'completed' || exam.status === 'inactive') {
-      return; // Don't navigate if exam is completed, cancelled, or inactive
+    if (examResult || exam.status === 'completed' || exam.status === 'inactive' || !hasAccess) {
+      return; // Don't navigate if exam is completed, cancelled, inactive, or student doesn't have access
     }
     navigate(`/exam/${exam.id}`);
   };
@@ -82,7 +91,7 @@ const ExamCard = ({ exam, index }: ExamCardProps) => {
       className={`group relative rounded-xl p-6 transition-all duration-300 animate-slide-up ${
         exam.status === 'upcoming' 
           ? 'opacity-80 cursor-not-allowed backdrop-blur-sm bg-primary/5 border border-border/20' 
-          : !!examResult || exam.status === 'completed' || exam.status === 'inactive'
+          : !!examResult || exam.status === 'completed' || exam.status === 'inactive' || !hasAccess
             ? 'bg-destructive/10 text-destructive border border-destructive/30 cursor-not-allowed'
             : 'bg-primary text-primary-foreground border border-primary/50 hover:shadow-elevated cursor-pointer hover:bg-primary/90'
       }`}
@@ -163,6 +172,11 @@ const ExamCard = ({ exam, index }: ExamCardProps) => {
           ) : exam.status === 'inactive' ? (
             <div className="flex items-center justify-between text-destructive">
               <span className="text-sm font-medium">DISABLED</span>
+              <XCircle size={18} />
+            </div>
+          ) : !hasAccess ? (
+            <div className="flex items-center justify-between text-destructive">
+              <span className="text-sm font-medium">Access Denied</span>
               <XCircle size={18} />
             </div>
           ) : (exam.status === 'ongoing' || exam.status === 'active') && !examResult ? (
