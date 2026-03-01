@@ -29,16 +29,16 @@ const menuItems = [
   { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/admin/students', label: 'Students', icon: Users },
   { path: '/admin/teachers', label: 'Teachers', icon: GraduationCap },
-  { path: '/admin/programmes', label: 'Programmes', icon: Calendar, superadminOnly: true },
   { path: '/admin/exams', label: 'Exams', icon: BookOpen, superadminOnly: true },
   { path: '/admin/exam-access', label: 'Exam Access', icon: Lock, superadminOnly: true },
-  { path: '/admin/results', label: 'Results', icon: FileText },
   { path: '/admin/exam-release', label: 'Exam Release', icon: Send, superadminOnly: true },
-  { path: '/admin/version-management', label: 'Version Management', icon: Tag, superadminOnly: true },
+  { path: '/admin/results', label: 'Results', icon: FileText },
+  { path: '/admin/programmes', label: 'Programmes', icon: Calendar, superadminOnly: true },
   { path: '/admin/reports', label: 'Reports', icon: BarChart3 },
   { path: '/admin/elyonplus', label: 'ELYONPLUS', icon: Upload, superadminOnly: true },
   { path: '/admin/violations', label: 'Violations', icon: AlertTriangle },
   { path: '/admin/settings', label: 'Settings', icon: Settings, superadminOnly: true },
+  { path: '/admin/version-management', label: 'Version Management', icon: Tag, superadminOnly: true },
 ];
 
 const AdminSidebar = () => {
@@ -89,14 +89,14 @@ const AdminSidebar = () => {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-sm ${
                 isActive 
                   ? 'bg-primary-foreground text-primary' 
                   : 'text-primary-foreground/80 hover:bg-primary-foreground/10'
               }`}
             >
               <item.icon size={20} />
-              {!collapsed && <span className="font-medium">{item.label}</span>}
+              {!collapsed && <span className="font-medium text-sm">{item.label}</span>}
             </button>
           );
         })}
