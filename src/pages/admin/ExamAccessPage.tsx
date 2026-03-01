@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Filter, Users, CheckCircle, XCircle, AlertCircle, TrendingUp, Lock, Unlock, UserCheck, UserX } from 'lucide-react';
+import { Search, Filter, Users, CheckCircle, XCircle, AlertCircle, TrendingUp, Lock, Unlock, UserCheck, UserX, Upload, Download, FileText } from 'lucide-react';
 import { supabase, queryWithRetry, bulkGrantExamAccess, bulkRevokeExamAccess, grantExamAccess, revokeExamAccess, fetchExamAccessRecords, fetchStudents } from '@/lib/supabase';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
@@ -12,6 +12,18 @@ interface Student {
   class: string;
   section: string;
   rollNumber: string;
+  stream?: string; // Natural or Social
+  subjects?: {
+    mathematics?: boolean;
+    english?: boolean;
+    chemistry?: boolean;
+    physics?: boolean;
+    geography?: boolean;
+    history?: boolean;
+    sat?: boolean;
+    biology?: boolean;
+    economics?: boolean;
+  };
 }
 
 interface ExamAccessRecord {
@@ -35,6 +47,13 @@ const ExamAccessPage = () => {
   const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());
   const [isBulkActionLoading, setIsBulkActionLoading] = useState(false);
   const [currentExamId, setCurrentExamId] = useState<string>('');
+
+  // CSV upload state
+  const [isCsvUploadOpen, setIsCsvUploadOpen] = useState(false);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [isProcessingCsv, setIsProcessingCsv] = useState(false);
+  const [csvPreview, setCsvPreview] = useState<any[]>([]);
+  const [autoAssignMode, setAutoAssignMode] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -245,6 +264,244 @@ const ExamAccessPage = () => {
     }
   };
 
+  // CSV processing functions
+  const parseCSV = (csvText: string): any[] => {
+    const lines = csvText.split('\n').filter(line => line.trim());
+    if (lines.length < 2) return [];
+
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const rows = lines.slice(1).map(line => {
+      const values = line.split(',');
+      const row: any = {};
+      headers.forEach((header, index) => {
+        let value: string | boolean = values[index]?.trim() || '';
+        // Convert boolean strings to actual booleans for subject columns
+        if (['mathematics', 'english', 'chemistry', 'physics', 'geography', 'history', 'sat', 'biology', 'economics'].includes(header)) {
+          value = value.toLowerCase() === 'true' || value === '1' || value.toLowerCase() === 'yes';
+        }
+        row[header] = value;
+      });
+      return row;
+    });
+
+    return rows;
+  };
+
+  const getExamIdForSubject = (subject: string, stream?: string): string | null => {
+    const subjectLower = subject.toLowerCase();
+
+    // Map subjects to exam IDs based on stream
+    if (subjectLower === 'mathematics') {
+      return 'math-2018';
+    } else if (subjectLower === 'english') {
+      return 'english-euee-2018';
+    } else if (subjectLower === 'chemistry') {
+      return stream === 'Natural' ? 'chemistry-2018-natural' : 'chemistry-2018-social';
+    } else if (subjectLower === 'physics') {
+      return 'physics-miskaye-hizunan-2024';
+    } else if (subjectLower === 'geography') {
+      return 'geography-2018';
+    } else if (subjectLower === 'history') {
+      return 'history-2018';
+    } else if (subjectLower === 'sat') {
+      return 'sat-2018';
+    } else if (subjectLower === 'biology') {
+      return 'biology-2018-grade12';
+    } else if (subjectLower === 'economics') {
+      return 'economics-2018';
+    }
+
+    return null;
+  };
+
+  const handleCsvFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Accept CSV files regardless of MIME type (some CSVs might not be detected as text/csv)
+      const fileName = file.name.toLowerCase();
+      const isCsv = fileName.endsWith('.csv') || file.type === 'text/csv' || file.type === 'application/vnd.ms-excel';
+
+      console.log('Selected file:', file.name, 'Type:', file.type, 'Is CSV:', isCsv);
+
+      if (isCsv) {
+        setCsvFile(file);
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const csvText = e.target?.result as string;
+          console.log('CSV content preview:', csvText.substring(0, 200));
+          const parsedData = parseCSV(csvText);
+          console.log('Parsed data:', parsedData.slice(0, 2));
+          setCsvPreview(parsedData.slice(0, 5)); // Show first 5 rows as preview
+        };
+        reader.readAsText(file);
+      } else {
+        alert('Please select a valid CSV file.');
+        setCsvFile(null);
+        setCsvPreview([]);
+      }
+    }
+  };
+
+  const processCsvAndAssignAccess = async () => {
+    if (!csvFile) {
+      alert('Please select a CSV file first.');
+      return;
+    }
+
+    console.log('Starting CSV processing...');
+    setIsProcessingCsv(true);
+
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const csvText = e.target?.result as string;
+          console.log('CSV text length:', csvText.length);
+
+          if (!csvText || csvText.trim().length === 0) {
+            throw new Error('CSV file is empty');
+          }
+
+          const csvData = parseCSV(csvText);
+          console.log('Parsed CSV data count:', csvData.length);
+
+          if (csvData.length === 0) {
+            throw new Error('No valid data found in CSV');
+          }
+
+          console.log('First parsed row:', csvData[0]);
+
+          let successCount = 0;
+          let errorCount = 0;
+
+          for (let i = 0; i < csvData.length; i++) {
+            const row = csvData[i];
+            console.log(`Processing row ${i + 1}:`, row);
+
+            try {
+              // Map Google Forms columns to our expected format
+              const mappedRow: any = {
+                admission_id: row['provide us with your admission id'] || '',
+                name: row['provide us with your name'] || '',
+                stream: row['what is your stream'] || '',
+                section: row['provide us with your class and section'] || '',
+                // Initialize all subjects to false
+                mathematics: false,
+                english: false,
+                chemistry: false,
+                physics: false,
+                geography: false,
+                history: false,
+                sat: false,
+                biology: false,
+                economics: false
+              };
+
+              // Parse subject selections based on stream
+              const stream = mappedRow.stream.toLowerCase();
+
+              // Check individual subject columns for true/false values
+              if (stream === 'natural') {
+                mappedRow.english = row['which exams  (english for natural science)'] === 'true';
+                mappedRow.mathematics = row['which exams  (mathematics for natural science)'] === 'true';
+                mappedRow.sat = row['which exams  (sat for natural science)'] === 'true';
+                mappedRow.biology = row['which exams  (biology for natural science)'] === 'true';
+                mappedRow.chemistry = row['which exams  (chemistry for natural science)'] === 'true';
+                mappedRow.physics = row['which exams  (physics for natural science)'] === 'true';
+              } else if (stream === 'social') {
+                mappedRow.english = row['which exams  (english for social science)'] === 'true';
+                mappedRow.mathematics = row['which exams  (mathematics for social science)'] === 'true';
+                mappedRow.sat = row['which exams  (sat for social science)'] === 'true';
+                mappedRow.history = row['which exams  (history for social science)'] === 'true';
+                mappedRow.geography = row['which exams  (geography for social science)'] === 'true';
+                mappedRow.economics = row['which exams  (economics for social science)'] === 'true';
+              }
+
+              const studentId = mappedRow.admission_id;
+              if (!studentId || studentId.trim() === '') {
+                console.warn(`Row ${i + 1}: No student ID found, skipping`);
+                errorCount++;
+                continue;
+              }
+
+              console.log(`Row ${i + 1}: Processing student ${studentId} (${mappedRow.stream})`);
+
+              // Auto-assign based on stream and subjects
+              if (autoAssignMode) {
+                const examsToGrant: string[] = [];
+
+                // Natural stream subjects
+                if (mappedRow.stream.toLowerCase() === 'natural') {
+                  if (mappedRow.mathematics) examsToGrant.push('math-2018');
+                  if (mappedRow.english) examsToGrant.push('english-euee-2018');
+                  if (mappedRow.chemistry) examsToGrant.push('chemistry-2018-natural');
+                  if (mappedRow.physics) examsToGrant.push('physics-miskaye-hizunan-2024');
+                  if (mappedRow.biology) examsToGrant.push('biology-2018-grade12');
+                  if (mappedRow.sat) examsToGrant.push('sat-2018');
+                }
+                // Social stream subjects
+                else if (mappedRow.stream.toLowerCase() === 'social') {
+                  if (mappedRow.mathematics) examsToGrant.push('math-2018');
+                  if (mappedRow.english) examsToGrant.push('english-euee-2018');
+                  if (mappedRow.geography) examsToGrant.push('geography-2018');
+                  if (mappedRow.history) examsToGrant.push('history-2018');
+                  if (mappedRow.economics) examsToGrant.push('economics-2018');
+                  if (mappedRow.sat) examsToGrant.push('sat-2018');
+                }
+
+                console.log(`Row ${i + 1}: Granting access to exams:`, examsToGrant);
+
+                // Grant access to calculated exams
+                for (const examId of examsToGrant) {
+                  try {
+                    await grantExamAccess(studentId, examId);
+                    console.log(`Row ${i + 1}: Granted access to ${examId}`);
+                  } catch (examError) {
+                    console.error(`Row ${i + 1}: Failed to grant access to ${examId}:`, examError);
+                  }
+                }
+
+                if (examsToGrant.length > 0) successCount++;
+              } else {
+                console.log(`Row ${i + 1}: Auto-assign mode disabled, skipping access grant`);
+                successCount++;
+              }
+            } catch (rowError) {
+              console.error(`Row ${i + 1}: Error processing row:`, rowError);
+              errorCount++;
+            }
+          }
+
+          const message = autoAssignMode
+            ? `CSV processing complete!\n✅ Successfully processed: ${successCount} students\n❌ Errors: ${errorCount} students\n\nExam access has been granted based on student selections.`
+            : `CSV processing complete!\n✅ Successfully validated: ${successCount} students\n❌ Errors: ${errorCount} students\n\nEnable "Auto-assign exam access" to grant permissions.`;
+
+          alert(message);
+          console.log('CSV processing summary:', { successCount, errorCount, total: csvData.length });
+
+          // Refresh data
+          window.location.reload();
+        } catch (processingError) {
+          console.error('Error during CSV processing:', processingError);
+          alert(`Failed to process CSV: ${processingError.message}`);
+        }
+      };
+
+      reader.onerror = () => {
+        console.error('File reading error');
+        alert('Failed to read the CSV file. Please try again.');
+      };
+
+      reader.readAsText(csvFile);
+    } catch (error) {
+      console.error('Error setting up CSV processing:', error);
+      alert('Failed to start CSV processing. Please try again.');
+    } finally {
+      setIsProcessingCsv(false);
+    }
+  };
+
   // Calculate stats
   const totalStudents = filteredStudents.length;
   const studentsWithAccess = currentExamId ? filteredStudents.filter(s => hasAccess(s.admissionId, currentExamId)).length : 0;
@@ -282,7 +539,144 @@ const ExamAccessPage = () => {
           <h1 className="text-2xl font-bold text-foreground">Exam Access Management</h1>
           <p className="text-muted-foreground">Control which students can access specific exams</p>
         </div>
+        {admin?.role === 'superadmin' && (
+          <button
+            onClick={() => setIsCsvUploadOpen(!isCsvUploadOpen)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            <Upload size={18} />
+            <span>Import Student Data</span>
+          </button>
+        )}
       </div>
+
+      {/* CSV Upload Section */}
+      {isCsvUploadOpen && admin?.role === 'superadmin' && (
+        <div className="mb-8 p-6 bg-card border border-border rounded-xl animate-slide-up">
+          <div className="flex items-center gap-3 mb-4">
+            <FileText size={24} className="text-primary" />
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Bulk Student Data Import</h3>
+              <p className="text-sm text-muted-foreground">Upload CSV file to automatically assign exam access based on student academic information</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">CSV File</label>
+                  <input
+                    type="file"
+                    accept=".csv"
+                    onChange={handleCsvFileChange}
+                    className="w-full px-3 py-2 bg-background border border-input rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    CSV should contain: admission_id, name, stream, section, and subject columns (mathematics, english, chemistry, etc.)
+                  </p>
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+                    <input
+                      type="checkbox"
+                      checked={autoAssignMode}
+                      onChange={(e) => setAutoAssignMode(e.target.checked)}
+                      className="rounded border-border"
+                    />
+                    Auto-assign exam access
+                  </label>
+                  <p className="text-xs text-muted-foreground">
+                    Automatically grant access to exams based on student's academic stream and enrolled subjects
+                  </p>
+                </div>
+              </div>
+
+              <div className="ml-4">
+                <button
+                  onClick={() => {
+                    const csvContent = `admission_id,name,stream,section,mathematics,english,chemistry,physics,geography,history,sat,biology,economics
+707070,TWEST TEEST,Natural,12A,true,true,true,true,false,false,true,true,false
+707071,Kidus Anteneh,Social,12B,true,true,false,false,true,true,true,false,true
+707072,Soliyana Mesfin,Natural,12C,true,true,true,true,false,false,false,true,false`;
+                    const blob = new Blob([csvContent], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'student_data_template.csv';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors"
+                >
+                  <Download size={16} />
+                  <span>Download Template</span>
+                </button>
+              </div>
+            </div>
+
+            {csvPreview.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium text-foreground mb-2">CSV Preview (First 5 rows)</h4>
+                <div className="bg-secondary/50 rounded-lg p-3 max-h-40 overflow-y-auto">
+                  <pre className="text-xs text-foreground whitespace-pre-wrap">
+                    {JSON.stringify(csvPreview, null, 2)}
+                  </pre>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={processCsvAndAssignAccess}
+                disabled={!csvFile || isProcessingCsv}
+                className="flex items-center gap-2 px-4 py-2 bg-success text-success-foreground rounded-lg hover:bg-success/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isProcessingCsv ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-success-foreground border-t-transparent" />
+                ) : (
+                  <Upload size={16} />
+                )}
+                <span>{isProcessingCsv ? 'Processing...' : 'Process & Import'}</span>
+              </button>
+
+              {csvFile && (
+                <button
+                  onClick={() => {
+                    console.log('Testing CSV processing...');
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                      const csvText = e.target?.result as string;
+                      console.log('CSV raw text length:', csvText.length);
+                      const parsedData = parseCSV(csvText);
+                      console.log('Parsed data count:', parsedData.length);
+                      console.log('First parsed row:', parsedData[0]);
+                      alert(`CSV parsed successfully! Found ${parsedData.length} students. Check console for details.`);
+                    };
+                    reader.readAsText(csvFile);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <FileText size={16} />
+                  <span>Test CSV</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  setCsvFile(null);
+                  setCsvPreview([]);
+                  setAutoAssignMode(false);
+                }}
+                className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       {currentExamId && (
